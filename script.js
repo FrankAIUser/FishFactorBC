@@ -247,27 +247,30 @@ const QuizStart = ({ onStart }) => (
     </div>
 );
 
-const QuizQuestion = ({ question, onAnswer }) => (
-  <div>
-      <h2 className="text-2xl font-bold mb-4">Identify this fish:</h2>
-      <ul className="list-disc pl-5 mb-4">
-          {question.characteristics.map((char, index) => (
-              <li key={index}>{char}</li>
-          ))}
-      </ul>
-      <div className="grid grid-cols-2 gap-4">
-          {question.options.map((option, index) => (
-              <button
-                  key={index}
-                  onClick={() => onAnswer(option)}
-                  className="quiz-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 w-full"
-              >
-                  {option}
-              </button>
-          ))}
+const QuizQuestion = ({ question, onAnswer }) => {
+  return (
+      <div className="p-4">
+          <h2 className="text-2xl font-bold mb-4">Identify this fish:</h2>
+          <ul className="list-disc pl-5 mb-4">
+              {question.characteristics.map((char, index) => (
+                  <li key={index}>{char}</li>
+              ))}
+          </ul>
+          <div className="grid grid-cols-2 gap-4">
+              {question.options.map((option, index) => (
+                  <div key={index} className="flex">
+                      <button
+                          onClick={() => onAnswer(option)}
+                          className="w-full min-h-[60px] flex items-center justify-center text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 break-words hyphens-auto"
+                      >
+                          {option}
+                      </button>
+                  </div>
+              ))}
+          </div>
       </div>
-  </div>
-);
+  );
+};
 
 const QuizEnd = ({ score, totalQuestions, onRestart }) => {
     const percentage = (score / totalQuestions) * 100;
