@@ -248,25 +248,25 @@ const QuizStart = ({ onStart }) => (
 );
 
 const QuizQuestion = ({ question, onAnswer }) => (
-    <div>
-        <h2 className="text-2xl font-bold mb-4">Identify this fish:</h2>
-        <ul className="list-disc pl-5 mb-4">
-            {question.characteristics.map((char, index) => (
-                <li key={index}>{char}</li>
-            ))}
-        </ul>
-        <div className="grid grid-cols-2 gap-4">
-            {question.options.map((option, index) => (
-                <button
-                    key={index}
-                    onClick={() => onAnswer(option)}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
-                >
-                    {option}
-                </button>
-            ))}
-        </div>
-    </div>
+  <div>
+      <h2 className="text-2xl font-bold mb-4">Identify this fish:</h2>
+      <ul className="list-disc pl-5 mb-4">
+          {question.characteristics.map((char, index) => (
+              <li key={index}>{char}</li>
+          ))}
+      </ul>
+      <div className="grid grid-cols-2 gap-4">
+          {question.options.map((option, index) => (
+              <button
+                  key={index}
+                  onClick={() => onAnswer(option)}
+                  className="quiz-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 w-full"
+              >
+                  {option}
+              </button>
+          ))}
+      </div>
+  </div>
 );
 
 const QuizEnd = ({ score, totalQuestions, onRestart }) => {
