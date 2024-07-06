@@ -248,6 +248,22 @@ const QuizStart = ({ onStart }) => (
 );
 
 const QuizQuestion = ({ question, onAnswer }) => {
+  const [maxHeight, setMaxHeight] = React.useState(0);
+  const buttonRefs = React.useRef([]);
+
+  React.useEffect(() => {
+      const calculateMaxHeight = () => {
+          const heights = buttonRefs.current.map(ref => ref?.offsetHeight || 0);
+          const newMaxHeight = Math.max(...heights, 60); // Minimum of 60px
+          setMaxHeight(newMaxHeight);
+      };
+
+      calculateMaxHeight();
+      window.addEventListener('resize', calculateMaxHeight);
+
+      return () => window.removeEventListener('resize', calculateMaxHeight);
+  }, [question]);
+
   return (
       <div className="p-4">
           <h2 className="text-2xl font-bold mb-4">Identify this fish:</h2>
@@ -258,10 +274,11 @@ const QuizQuestion = ({ question, onAnswer }) => {
           </ul>
           <div className="grid grid-cols-2 gap-4">
               {question.options.map((option, index) => (
-                  <div key={index} className="flex">
+                  <div key={index} style={{height: `${maxHeight}px`}} className="flex">
                       <button
+                          ref={el => buttonRefs.current[index] = el}
                           onClick={() => onAnswer(option)}
-                          className="w-full min-h-[60px] flex items-center justify-center text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 break-words hyphens-auto"
+                          className="w-full h-full flex items-center justify-center text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 break-words hyphens-auto"
                       >
                           {option}
                       </button>
