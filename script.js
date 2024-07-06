@@ -1,7 +1,5 @@
 console.log('Script execution started');
 
-const React = window.React;
-const ReactDOM = window.ReactDOM;
 const { useState } = React;
 
 
@@ -205,209 +203,188 @@ const fishData = [
 ];
   
 
-
 const FishCard = ({ fish }) => (
-    <div className="bg-white rounded-xl shadow-lg p-6 m-4 flex flex-col">
-        <h2 className="text-xl font-bold mb-2">{fish.name}</h2>
-        <div className="flex-grow flex items-center justify-center overflow-hidden mb-4">
-            <img 
-                src={fish.image} 
-                alt={fish.name} 
-                className="w-full h-auto max-h-64 object-contain"
-            />
-        </div>
-        <ul className="list-disc pl-5">
-            {fish.characteristics.map((char, index) => (
-                <li key={index}>{char}</li>
-            ))}
-        </ul>
-    </div>
+  <div className="bg-white rounded-xl shadow-lg p-6 m-4 flex flex-col">
+      <h2 className="text-xl font-bold mb-2">{fish.name}</h2>
+      <div className="flex-grow flex items-center justify-center overflow-hidden mb-4">
+          <img 
+              src={fish.image} 
+              alt={fish.name} 
+              className="w-full h-auto max-h-64 object-contain"
+          />
+      </div>
+      <ul className="list-disc pl-5">
+          {fish.characteristics.map((char, index) => (
+              <li key={index}>{char}</li>
+          ))}
+      </ul>
+  </div>
 );
 
 const FishList = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {fishData.map((fish, index) => (
-            <FishCard key={index} fish={fish} />
-        ))}
-    </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {fishData.map((fish, index) => (
+          <FishCard key={index} fish={fish} />
+      ))}
+  </div>
 );
 
 const QuizStart = ({ onStart }) => (
-    <div className="text-center">
-        <h2 className="text-2xl font-bold mb-4">Welcome to the Fish Identification Quiz!</h2>
-        <p className="mb-4">Test your knowledge of British Columbia's freshwater fish.</p>
-        <p className="mb-4">You'll be shown characteristics of a fish and asked to identify it.</p>
-        <p className="mb-4">Try to score at least 60% to pass the quiz!</p>
-        <button
-            onClick={onStart}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
-        >
-            Start Quiz
-        </button>
-    </div>
+  <div className="text-center">
+      <h2 className="text-2xl font-bold mb-4">Welcome to the Fish Identification Quiz!</h2>
+      <p className="mb-4">Test your knowledge of British Columbia's freshwater fish.</p>
+      <p className="mb-4">You'll be shown characteristics of a fish and asked to identify it.</p>
+      <p className="mb-4">Try to score at least 60% to pass the quiz!</p>
+      <button
+          onClick={onStart}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
+      >
+          Start Quiz
+      </button>
+  </div>
 );
 
-const QuizQuestion = ({ question, onAnswer }) => {
-  const [maxHeight, setMaxHeight] = React.useState(0);
-  const buttonRefs = React.useRef([]);
+const QuizQuestion = ({ question, onAnswer }) => (
+  <div>
+      <h2 className="text-2xl font-bold mb-4">Identify this fish:</h2>
+      <ul className="list-disc pl-5 mb-4">
+          {question.characteristics.map((char, index) => (
+              <li key={index}>{char}</li>
+          ))}
+      </ul>
+      <div className="grid grid-cols-2 gap-4">
+          {question.options.map((option, index) => (
+              <button
+                  key={index}
+                  onClick={() => onAnswer(option)}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
+              >
+                  {option}
+              </button>
+          ))}
+      </div>
+  </div>
+);
 
-  React.useEffect(() => {
-      const calculateMaxHeight = () => {
-          const heights = buttonRefs.current.map(ref => ref?.offsetHeight || 0);
-          const newMaxHeight = Math.max(...heights, 60); // Minimum of 60px
-          setMaxHeight(newMaxHeight);
-      };
-
-      calculateMaxHeight();
-      window.addEventListener('resize', calculateMaxHeight);
-
-      return () => window.removeEventListener('resize', calculateMaxHeight);
-  }, [question]);
+const QuizEnd = ({ score, totalQuestions, onRestart }) => {
+  const percentage = (score / totalQuestions) * 100;
+  const passed = percentage >= 60;
 
   return (
-      <div className="p-4">
-          <h2 className="text-2xl font-bold mb-4">Identify this fish:</h2>
-          <ul className="list-disc pl-5 mb-4">
-              {question.characteristics.map((char, index) => (
-                  <li key={index}>{char}</li>
-              ))}
-          </ul>
-          <div className="grid grid-cols-2 gap-4">
-              {question.options.map((option, index) => (
-                  <div key={index} style={{height: `${maxHeight}px`}} className="flex">
-                      <button
-                          ref={el => buttonRefs.current[index] = el}
-                          onClick={() => onAnswer(option)}
-                          className="w-full h-full flex items-center justify-center text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 break-words hyphens-auto"
-                      >
-                          {option}
-                      </button>
-                  </div>
-              ))}
-          </div>
+      <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
+          <p className="mb-4">Your score: {score} out of {totalQuestions}</p>
+          {passed ? (
+              <div className="animate-bounce">
+                  <p className="text-3xl font-bold text-green-500 mb-4">
+                      Congratulations! You passed!
+                  </p>
+                  <svg className="mx-auto h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+              </div>
+          ) : (
+              <p className="text-xl text-red-500 mb-4">Keep practicing! You'll get there!</p>
+          )}
+          <button
+              onClick={onRestart}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4 transition duration-300 ease-in-out transform hover:scale-105"
+          >
+              Retake Quiz
+          </button>
       </div>
   );
 };
 
-const QuizEnd = ({ score, totalQuestions, onRestart }) => {
-    const percentage = (score / totalQuestions) * 100;
-    const passed = percentage >= 60;
-
-    return (
-        <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
-            <p className="mb-4">Your score: {score} out of {totalQuestions}</p>
-            {passed ? (
-                <div className="animate-bounce">
-                    <p className="text-3xl font-bold text-green-500 mb-4">
-                        Congratulations! You passed!
-                    </p>
-                    <svg className="mx-auto h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-            ) : (
-                <p className="text-xl text-red-500 mb-4">Keep practicing! You'll get there!</p>
-            )}
-            <button
-                onClick={onRestart}
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4 transition duration-300 ease-in-out transform hover:scale-105"
-            >
-                Retake Quiz
-            </button>
-        </div>
-    );
-};
-
 const Quiz = () => {
-    const [quizState, setQuizState] = useState('start');
-    const [currentQuestion, setCurrentQuestion] = useState(null);
-    const [score, setScore] = useState(0);
-    const [questionCount, setQuestionCount] = useState(0);
+  const [quizState, setQuizState] = useState('start');
+  const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [score, setScore] = useState(0);
+  const [questionCount, setQuestionCount] = useState(0);
 
-    const startQuiz = () => {
-        setQuizState('question');
-        setScore(0);
-        setQuestionCount(0);
-        nextQuestion();
-    };
+  const startQuiz = () => {
+      setQuizState('question');
+      setScore(0);
+      setQuestionCount(0);
+      nextQuestion();
+  };
 
-    const nextQuestion = () => {
-        if (questionCount >= 10) {
-            setQuizState('end');
-            return;
-        }
+  const nextQuestion = () => {
+      if (questionCount >= 10) {
+          setQuizState('end');
+          return;
+      }
 
-        const correctFish = fishData[Math.floor(Math.random() * fishData.length)];
-        let options = [correctFish.name];
-        while (options.length < 4) {
-            const randomFish = fishData[Math.floor(Math.random() * fishData.length)];
-            if (!options.includes(randomFish.name)) {
-                options.push(randomFish.name);
-            }
-        }
-        options = options.sort(() => Math.random() - 0.5);
+      const correctFish = fishData[Math.floor(Math.random() * fishData.length)];
+      let options = [correctFish.name];
+      while (options.length < 4) {
+          const randomFish = fishData[Math.floor(Math.random() * fishData.length)];
+          if (!options.includes(randomFish.name)) {
+              options.push(randomFish.name);
+          }
+      }
+      options = options.sort(() => Math.random() - 0.5);
 
-        setCurrentQuestion({
-            characteristics: correctFish.characteristics,
-            options: options,
-            correctAnswer: correctFish.name
-        });
+      setCurrentQuestion({
+          characteristics: correctFish.characteristics,
+          options: options,
+          correctAnswer: correctFish.name
+      });
 
-        setQuestionCount(prev => prev + 1);
-    };
+      setQuestionCount(prev => prev + 1);
+  };
 
-    const handleAnswer = (answer) => {
-        if (answer === currentQuestion.correctAnswer) {
-            setScore(prev => prev + 1);
-        }
-        nextQuestion();
-    };
+  const handleAnswer = (answer) => {
+      if (answer === currentQuestion.correctAnswer) {
+          setScore(prev => prev + 1);
+      }
+      nextQuestion();
+  };
 
-    return (
-        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
-            {quizState === 'start' && <QuizStart onStart={startQuiz} />}
-            {quizState === 'question' && currentQuestion && (
-                <QuizQuestion question={currentQuestion} onAnswer={handleAnswer} />
-            )}
-            {quizState === 'end' && (
-                <QuizEnd score={score} totalQuestions={10} onRestart={startQuiz} />
-            )}
-        </div>
-    );
+  return (
+      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
+          {quizState === 'start' && <QuizStart onStart={startQuiz} />}
+          {quizState === 'question' && currentQuestion && (
+              <QuizQuestion question={currentQuestion} onAnswer={handleAnswer} />
+          )}
+          {quizState === 'end' && (
+              <QuizEnd score={score} totalQuestions={10} onRestart={startQuiz} />
+          )}
+      </div>
+  );
 };
 
 const Dashboard = () => {
-    const [activeTab, setActiveTab] = useState('list');
+  const [activeTab, setActiveTab] = useState('list');
 
-    return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Fish Factor BC</h1>
-            <div className="flex justify-center mb-8">
-                <button
-                    onClick={() => setActiveTab('list')}
-                    className={`mx-2 px-4 py-2 rounded-full ${
-                        activeTab === 'list' 
-                            ? 'bg-blue-500 text-white' 
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    } transition duration-300 ease-in-out transform hover:scale-105`}
-                >
-                    Fish List
-                </button>
-                <button
-                    onClick={() => setActiveTab('quiz')}
-                    className={`mx-2 px-4 py-2 rounded-full ${
-                        activeTab === 'quiz' 
-                            ? 'bg-blue-500 text-white' 
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    } transition duration-300 ease-in-out transform hover:scale-105`}
-                >
-                    Quiz
-                </button>
-            </div>
-            {activeTab === 'list' ? <FishList /> : <Quiz />}
-        </div>
-    );
+  return (
+      <div className="container mx-auto px-4 py-8">
+          <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Fish Factor BC</h1>
+          <div className="flex justify-center mb-8">
+              <button
+                  onClick={() => setActiveTab('list')}
+                  className={`mx-2 px-4 py-2 rounded-full ${
+                      activeTab === 'list' 
+                          ? 'bg-blue-500 text-white' 
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  } transition duration-300 ease-in-out transform hover:scale-105`}
+              >
+                  Fish List
+              </button>
+              <button
+                  onClick={() => setActiveTab('quiz')}
+                  className={`mx-2 px-4 py-2 rounded-full ${
+                      activeTab === 'quiz' 
+                          ? 'bg-blue-500 text-white' 
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  } transition duration-300 ease-in-out transform hover:scale-105`}
+              >
+                  Quiz
+              </button>
+          </div>
+          {activeTab === 'list' ? <FishList /> : <Quiz />}
+      </div>
+  );
 };
 
 console.log('About to render Dashboard');
