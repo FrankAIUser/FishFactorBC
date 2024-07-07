@@ -1,6 +1,6 @@
 console.log('Script execution started');
 
-const { useState } = React;
+const { useState, useEffect } = React;  // Ensure useEffect is imported here
 
 
 const fishData = [
@@ -310,12 +310,10 @@ const Quiz = () => {
   };
 
   useEffect(() => {
-      // This will run when `quizState` changes
       if (quizState === 'end') {
-          // Automatically reset the quiz when it reaches the end state
           console.log("Quiz ended. Resetting...");
       }
-  }, [quizState]); // Dependency array, re-run this effect if `quizState` changes
+  }, [quizState]);
 
   const nextQuestion = () => {
       if (questionCount >= 10) {
@@ -361,8 +359,6 @@ const Quiz = () => {
       </div>
   );
 };
-
-
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('list');
