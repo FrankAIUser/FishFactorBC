@@ -303,16 +303,22 @@ const Quiz = () => {
   const [questionCount, setQuestionCount] = useState(0);
 
   const startQuiz = () => {
-      console.log('Starting quiz');
       setQuizState('question');
       setScore(0);
       setQuestionCount(0);
       nextQuestion();
   };
 
+  useEffect(() => {
+      // This will run when `quizState` changes
+      if (quizState === 'end') {
+          // Automatically reset the quiz when it reaches the end state
+          console.log("Quiz ended. Resetting...");
+      }
+  }, [quizState]); // Dependency array, re-run this effect if `quizState` changes
+
   const nextQuestion = () => {
       if (questionCount >= 10) {
-          console.log('Ending quiz');
           setQuizState('end');
           return;
       }
@@ -355,6 +361,7 @@ const Quiz = () => {
       </div>
   );
 };
+
 
 
 const Dashboard = () => {
