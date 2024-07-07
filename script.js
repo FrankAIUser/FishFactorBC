@@ -303,6 +303,7 @@ const Quiz = () => {
   const [questionCount, setQuestionCount] = useState(0);
 
   const startQuiz = () => {
+      console.log('Starting quiz');
       setQuizState('question');
       setScore(0);
       setQuestionCount(0);
@@ -311,6 +312,7 @@ const Quiz = () => {
 
   const nextQuestion = () => {
       if (questionCount >= 10) {
+          console.log('Ending quiz');
           setQuizState('end');
           return;
       }
@@ -348,11 +350,12 @@ const Quiz = () => {
               <QuizQuestion question={currentQuestion} onAnswer={handleAnswer} />
           )}
           {quizState === 'end' && (
-            <QuizEnd score={score} totalQuestions={10} onRestart={startQuiz} />
+              <QuizEnd score={score} totalQuestions={10} onRestart={startQuiz} />
           )}
       </div>
   );
 };
+
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('list');
