@@ -348,7 +348,7 @@ const Quiz = () => {
               <QuizQuestion question={currentQuestion} onAnswer={handleAnswer} />
           )}
           {quizState === 'end' && (
-              <QuizEnd score={score} totalQuestions={10} onRestart={startQuiz} />
+            <QuizEnd score={score} totalQuestions={10} onRestart={startQuiz} />
           )}
       </div>
   );
