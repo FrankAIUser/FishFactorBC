@@ -1,6 +1,6 @@
 console.log('Script execution started');
 
-const { useState, useEffect } = React;  // Ensure useEffect is imported here
+const { useState, useEffect } = React;  // Make sure useEffect is imported here
 
 
 const fishData = [
