@@ -204,28 +204,28 @@ const fishData = [
   
 
 const FishCard = ({ fish }) => (
-  <div className="bg-white rounded-xl shadow-lg p-6 m-4 flex flex-col">
-      <h2 className="text-xl font-bold mb-2">{fish.name}</h2>
-      <div className="flex-grow flex items-center justify-center overflow-hidden mb-4">
-          <img 
-              src={fish.image} 
-              alt={fish.name} 
-              className="w-full h-auto max-h-64 object-contain"
-          />
-      </div>
-      <ul className="list-disc pl-5">
-          {fish.characteristics.map((char, index) => (
-              <li key={index}>{char}</li>
-          ))}
-      </ul>
+  <div className="bg-white rounded-xl shadow-lg p-6 m-4 flex flex-col transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
+    <h2 className="text-xl font-bold mb-2">{fish.name}</h2>
+    <div className="flex-grow flex items-center justify-center overflow-hidden mb-4">
+      <img 
+        src={fish.image} 
+        alt={fish.name} 
+        className="w-full h-auto max-h-64 object-contain"
+      />
+    </div>
+    <ul className="list-disc pl-5">
+      {fish.characteristics.map((char, index) => (
+        <li key={index}>{char}</li>
+      ))}
+    </ul>
   </div>
 );
 
 const FishList = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {fishData.map((fish, index) => (
-          <FishCard key={index} fish={fish} />
-      ))}
+    {fishData.map((fish, index) => (
+      <FishCard key={index} fish={fish} />
+    ))}
   </div>
 );
 
