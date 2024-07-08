@@ -1,6 +1,6 @@
 console.log('Script execution started');
 
-const { useState, useEffect } = React;  // Make sure useEffect is imported here
+const { useState, useCallback } = React;  // Make sure useEffect is imported here
 
 
 const fishData = [
@@ -360,37 +360,36 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('list');
 
   return (
-      <div className="container mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Fish Factor BC</h1>
-          <div className="flex justify-center mb-8">
-              <button
-                  onClick={() => setActiveTab('list')}
-                  className={`mx-2 px-4 py-2 rounded-full ${
-                      activeTab === 'list' 
-                          ? 'bg-blue-500 text-white' 
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  } transition duration-300 ease-in-out transform hover:scale-105`}
-              >
-                  Fish List
-              </button>
-              <button
-                  onClick={() => setActiveTab('quiz')}
-                  className={`mx-2 px-4 py-2 rounded-full ${
-                      activeTab === 'quiz' 
-                          ? 'bg-blue-500 text-white' 
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  } transition duration-300 ease-in-out transform hover:scale-105`}
-              >
-                  Quiz
-              </button>
-          </div>
-          {activeTab === 'list' ? <FishList /> : <Quiz />}
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Fish Factor BC</h1>
+      <div className="flex justify-center mb-8">
+        <button
+          onClick={() => setActiveTab('list')}
+          className={`mx-2 px-4 py-2 rounded-full ${
+            activeTab === 'list' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          } transition duration-300 ease-in-out transform hover:scale-105`}
+        >
+          Fish List
+        </button>
+        <button
+          onClick={() => setActiveTab('quiz')}
+          className={`mx-2 px-4 py-2 rounded-full ${
+            activeTab === 'quiz' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          } transition duration-300 ease-in-out transform hover:scale-105`}
+        >
+          Quiz
+        </button>
       </div>
+      {activeTab === 'list' ? <FishList /> : <Quiz />}
+    </div>
   );
 };
 
+ReactDOM.render(<Dashboard />, document.getElementById('root'));
 console.log('About to render Dashboard');
 ReactDOM.render(<Dashboard />, document.getElementById('root'));
 console.log('Dashboard rendered');
-
-export default Dashboard;
