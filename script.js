@@ -1,6 +1,6 @@
 console.log('Script execution started');
 
-const { useState, useCallback } = React;  // Make sure useEffect is imported here
+const { useState, useCallback, useRef, useEffect } = React;  // Make sure useEffect is imported here
 
 
 const fishData = [
@@ -203,8 +203,11 @@ const fishData = [
 ];
   
 
-const FishCard = ({ fish }) => (
-  <div className="bg-white rounded-xl shadow-lg p-6 m-4 flex flex-col transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
+const FishCard = ({ fish, onClick }) => (
+  <div 
+    className="bg-white rounded-xl shadow-lg p-6 m-4 flex flex-col transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl cursor-pointer"
+    onClick={() => onClick(fish)}
+  >
     <h2 className="text-xl font-bold mb-2">{fish.name}</h2>
     <div className="flex-grow flex items-center justify-center overflow-hidden mb-4">
       <img 
@@ -221,11 +224,37 @@ const FishCard = ({ fish }) => (
   </div>
 );
 
-const FishList = () => (
+const FishList = ({ onFishClick }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     {fishData.map((fish, index) => (
-      <FishCard key={index} fish={fish} />
+      <FishCard key={index} fish={fish} onClick={onFishClick} />
     ))}
+  </div>
+);
+
+const FishDetailView = ({ fish, onBack }) => (
+  <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
+    <button 
+      onClick={onBack}
+      className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+    >
+      Back to Fish List
+    </button>
+    <h1 className="text-3xl font-bold mb-4">{fish.name}</h1>
+    <img 
+      src={fish.image} 
+      alt={fish.name} 
+      className="w-full h-auto max-h-96 object-contain mb-4"
+    />
+    <h2 className="text-xl font-bold mb-2">Characteristics:</h2>
+    <ul className="list-disc pl-5 mb-4">
+      {fish.characteristics.map((char, index) => (
+        <li key={index}>{char}</li>
+      ))}
+    </ul>
+    <p className="text-gray-600">
+      More detailed information about {fish.name} would go here. This could include habitat, diet, conservation status, and other interesting facts.
+    </p>
   </div>
 );
 
@@ -358,33 +387,61 @@ const Quiz = () => {
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('list');
+  const [selectedFish, setSelectedFish] = useState(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const listRef = useRef(null);
+
+  const handleFishClick = (fish) => {
+    setScrollPosition(window.pageYOffset);
+    setSelectedFish(fish);
+    setActiveTab('detail');
+  };
+
+  const handleBackToList = () => {
+    setSelectedFish(null);
+    setActiveTab('list');
+  };
+
+  useEffect(() => {
+    if (activeTab === 'list' && listRef.current) {
+      setTimeout(() => {
+        window.scrollTo(0, scrollPosition);
+      }, 0);
+    }
+  }, [activeTab, scrollPosition]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8" ref={listRef}>
       <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Fish Factor BC</h1>
-      <div className="flex justify-center mb-8">
-        <button
-          onClick={() => setActiveTab('list')}
-          className={`mx-2 px-4 py-2 rounded-full ${
-            activeTab === 'list' 
-              ? 'bg-blue-500 text-white' 
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          } transition duration-300 ease-in-out transform hover:scale-105`}
-        >
-          Fish List
-        </button>
-        <button
-          onClick={() => setActiveTab('quiz')}
-          className={`mx-2 px-4 py-2 rounded-full ${
-            activeTab === 'quiz' 
-              ? 'bg-blue-500 text-white' 
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          } transition duration-300 ease-in-out transform hover:scale-105`}
-        >
-          Quiz
-        </button>
-      </div>
-      {activeTab === 'list' ? <FishList /> : <Quiz />}
+      {activeTab !== 'detail' && (
+        <div className="flex justify-center mb-8">
+          <button
+            onClick={() => setActiveTab('list')}
+            className={`mx-2 px-4 py-2 rounded-full ${
+              activeTab === 'list' 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            } transition duration-300 ease-in-out transform hover:scale-105`}
+          >
+            Fish List
+          </button>
+          <button
+            onClick={() => setActiveTab('quiz')}
+            className={`mx-2 px-4 py-2 rounded-full ${
+              activeTab === 'quiz' 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            } transition duration-300 ease-in-out transform hover:scale-105`}
+          >
+            Quiz
+          </button>
+        </div>
+      )}
+      {activeTab === 'list' && <FishList onFishClick={handleFishClick} />}
+      {activeTab === 'quiz' && <Quiz />}
+      {activeTab === 'detail' && selectedFish && (
+        <FishDetailView fish={selectedFish} onBack={handleBackToList} />
+      )}
     </div>
   );
 };
