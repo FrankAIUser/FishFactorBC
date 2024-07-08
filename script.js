@@ -303,60 +303,57 @@ const Quiz = () => {
   const [questionCount, setQuestionCount] = useState(0);
 
   const startQuiz = () => {
-      setQuizState('question');
-      setScore(0);
-      setQuestionCount(0);
-      nextQuestion();
+    setQuizState('question');
+    setScore(0);
+    setQuestionCount(0);
+    generateNewQuestion();
   };
 
-  useEffect(() => {
-      if (quizState === 'end') {
-          console.log("Quiz ended. Resetting...");
+  const generateNewQuestion = () => {
+    const correctFish = fishData[Math.floor(Math.random() * fishData.length)];
+    let options = [correctFish.name];
+    while (options.length < 4) {
+      const randomFish = fishData[Math.floor(Math.random() * fishData.length)];
+      if (!options.includes(randomFish.name)) {
+        options.push(randomFish.name);
       }
-  }, [quizState]);
+    }
+    options = options.sort(() => Math.random() - 0.5);
+
+    setCurrentQuestion({
+      characteristics: correctFish.characteristics,
+      options: options,
+      correctAnswer: correctFish.name
+    });
+
+    setQuestionCount(prevCount => prevCount + 1);
+  };
 
   const nextQuestion = () => {
-      if (questionCount >= 10) {
-          setQuizState('end');
-          return;
-      }
-
-      const correctFish = fishData[Math.floor(Math.random() * fishData.length)];
-      let options = [correctFish.name];
-      while (options.length < 4) {
-          const randomFish = fishData[Math.floor(Math.random() * fishData.length)];
-          if (!options.includes(randomFish.name)) {
-              options.push(randomFish.name);
-          }
-      }
-      options = options.sort(() => Math.random() - 0.5);
-
-      setCurrentQuestion({
-          characteristics: correctFish.characteristics,
-          options: options,
-          correctAnswer: correctFish.name
-      });
-
-      setQuestionCount(prev => prev + 1);
+    if (questionCount >= 10) {
+      setQuizState('end');
+    } else {
+      generateNewQuestion();
+    }
   };
 
   const handleAnswer = (answer) => {
-      if (answer === currentQuestion.correctAnswer) {
-          setScore(prev => prev + 1);
-      }
-      nextQuestion();
+    if (answer === currentQuestion.correctAnswer) {
+      setScore(prevScore => prevScore + 1);
+    }
+    nextQuestion();
   };
 
   return (
-      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
-          {quizState === 'start' && <QuizStart onStart={startQuiz} />}
-          {quizState === 'question' && currentQuestion && (
-              <QuizQuestion question={currentQuestion} onAnswer={handleAnswer} />
-          )}
-          {quizState === 'end' && (
-              <QuizEnd score={score} totalQuestions={10} onRestart={startQuiz} />
-          )}
-      </div>
+    <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
+      {quizState === 'start' && <QuizStart onStart={startQuiz} />}
+      {quizState === 'question' && currentQuestion && (
+        <QuizQuestion question={currentQuestion} onAnswer={handleAnswer} />
+      )}
+      {quizState === 'end' && (
+        <QuizEnd score={score} totalQuestions={10} onRestart={startQuiz} />
+      )}
+    </div>
   );
 };
 
@@ -396,3 +393,5 @@ const Dashboard = () => {
 console.log('About to render Dashboard');
 ReactDOM.render(<Dashboard />, document.getElementById('root'));
 console.log('Dashboard rendered');
+
+export default Dashboard;
