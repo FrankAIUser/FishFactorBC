@@ -271,28 +271,28 @@ const QuizEnd = ({ score, totalQuestions, onRestart }) => {
   const passed = percentage >= 60;
 
   return (
-      <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
-          <p className="mb-4">Your score: {score} out of {totalQuestions}</p>
-          {passed ? (
-              <div className="animate-bounce">
-                  <p className="text-3xl font-bold text-green-500 mb-4">
-                      Congratulations! You passed!
-                  </p>
-                  <svg className="mx-auto h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-              </div>
-          ) : (
-              <p className="text-xl text-red-500 mb-4">Keep practicing! You'll get there!</p>
-          )}
-          <button
-              onClick={onRestart}
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4 transition duration-300 ease-in-out transform hover:scale-105"
-          >
-              Retake Quiz
-          </button>
-      </div>
+    <div className="text-center">
+      <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
+      <p className="mb-4">Your score: {score} out of {totalQuestions}</p>
+      {passed ? (
+        <div className="animate-bounce">
+          <p className="text-3xl font-bold text-green-500 mb-4">
+            Congratulations! You passed!
+          </p>
+          <svg className="mx-auto h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      ) : (
+        <p className="text-xl text-red-500 mb-4">Keep practicing! You'll get there!</p>
+      )}
+      <button
+        onClick={onRestart}
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4 transition duration-300 ease-in-out transform hover:scale-105"
+      >
+        Retake Quiz
+      </button>
+    </div>
   );
 };
 
@@ -302,14 +302,7 @@ const Quiz = () => {
   const [score, setScore] = useState(0);
   const [questionCount, setQuestionCount] = useState(0);
 
-  const startQuiz = () => {
-    setQuizState('question');
-    setScore(0);
-    setQuestionCount(0);
-    generateNewQuestion();
-  };
-
-  const generateNewQuestion = () => {
+  const generateNewQuestion = useCallback(() => {
     const correctFish = fishData[Math.floor(Math.random() * fishData.length)];
     let options = [correctFish.name];
     while (options.length < 4) {
@@ -320,29 +313,35 @@ const Quiz = () => {
     }
     options = options.sort(() => Math.random() - 0.5);
 
-    setCurrentQuestion({
+    return {
       characteristics: correctFish.characteristics,
       options: options,
       correctAnswer: correctFish.name
-    });
+    };
+  }, []);
 
-    setQuestionCount(prevCount => prevCount + 1);
-  };
+  const startQuiz = useCallback(() => {
+    setQuizState('question');
+    setScore(0);
+    setQuestionCount(1);
+    setCurrentQuestion(generateNewQuestion());
+  }, [generateNewQuestion]);
 
-  const nextQuestion = () => {
+  const nextQuestion = useCallback(() => {
     if (questionCount >= 10) {
       setQuizState('end');
     } else {
-      generateNewQuestion();
+      setCurrentQuestion(generateNewQuestion());
+      setQuestionCount(prevCount => prevCount + 1);
     }
-  };
+  }, [questionCount, generateNewQuestion]);
 
-  const handleAnswer = (answer) => {
+  const handleAnswer = useCallback((answer) => {
     if (answer === currentQuestion.correctAnswer) {
       setScore(prevScore => prevScore + 1);
     }
     nextQuestion();
-  };
+  }, [currentQuestion, nextQuestion]);
 
   return (
     <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
