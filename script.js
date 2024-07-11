@@ -224,9 +224,40 @@ const FishCard = ({ fish, onClick }) => (
   </div>
 );
 
-const FishList = ({ onFishClick }) => (
+const SearchBar = ({ onSearch }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    onSearch(searchTerm);
+  };
+
+  return (
+    <form onSubmit={handleSearch} className="mb-8">
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Search for a fish..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        <button
+          type="submit"
+          className="absolute right-0 top-0 mt-2 mr-2 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+      </div>
+    </form>
+  );
+};
+
+const FishList = ({ onFishClick, filteredFish }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    {fishData.map((fish, index) => (
+    {filteredFish.map((fish, index) => (
       <FishCard key={index} fish={fish} onClick={onFishClick} />
     ))}
   </div>
@@ -389,6 +420,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('list');
   const [selectedFish, setSelectedFish] = useState(null);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [filteredFish, setFilteredFish] = useState(fishData);
   const listRef = useRef(null);
 
   const handleFishClick = (fish) => {
@@ -400,6 +432,14 @@ const Dashboard = () => {
   const handleBackToList = () => {
     setSelectedFish(null);
     setActiveTab('list');
+  };
+
+  const handleSearch = (searchTerm) => {
+    const filtered = fishData.filter(fish =>
+      fish.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      fish.characteristics.some(char => char.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+    setFilteredFish(filtered);
   };
 
   useEffect(() => {
@@ -414,30 +454,33 @@ const Dashboard = () => {
     <div className="container mx-auto px-4 py-8" ref={listRef}>
       <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Fish Factor BC</h1>
       {activeTab !== 'detail' && (
-        <div className="flex justify-center mb-8">
-          <button
-            onClick={() => setActiveTab('list')}
-            className={`mx-2 px-4 py-2 rounded-full ${
-              activeTab === 'list' 
-                ? 'bg-blue-500 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            } transition duration-300 ease-in-out transform hover:scale-105`}
-          >
-            Fish List
-          </button>
-          <button
-            onClick={() => setActiveTab('quiz')}
-            className={`mx-2 px-4 py-2 rounded-full ${
-              activeTab === 'quiz' 
-                ? 'bg-blue-500 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            } transition duration-300 ease-in-out transform hover:scale-105`}
-          >
-            Quiz
-          </button>
-        </div>
+        <>
+          <SearchBar onSearch={handleSearch} />
+          <div className="flex justify-center mb-8">
+            <button
+              onClick={() => setActiveTab('list')}
+              className={`mx-2 px-4 py-2 rounded-full ${
+                activeTab === 'list' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              } transition duration-300 ease-in-out transform hover:scale-105`}
+            >
+              Fish List
+            </button>
+            <button
+              onClick={() => setActiveTab('quiz')}
+              className={`mx-2 px-4 py-2 rounded-full ${
+                activeTab === 'quiz' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              } transition duration-300 ease-in-out transform hover:scale-105`}
+            >
+              Quiz
+            </button>
+          </div>
+        </>
       )}
-      {activeTab === 'list' && <FishList onFishClick={handleFishClick} />}
+      {activeTab === 'list' && <FishList onFishClick={handleFishClick} filteredFish={filteredFish} />}
       {activeTab === 'quiz' && <Quiz />}
       {activeTab === 'detail' && selectedFish && (
         <FishDetailView fish={selectedFish} onBack={handleBackToList} />
